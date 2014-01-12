@@ -41,4 +41,8 @@ public class SourceCodeLine {
         return cleanedContent.startsWith("//");
     }    
     
+    public boolean isBlankLine() {
+        return cleanedContent.equals("");
+    }
+    
 }

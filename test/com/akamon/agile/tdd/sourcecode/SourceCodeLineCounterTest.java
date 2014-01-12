@@ -25,7 +25,7 @@ public class SourceCodeLineCounterTest {
     public void notCountBlankLines() {
         String[] sourceCodeContent = {"int c;", ""};
         SourceCode sourceCode = new SourceCode(sourceCodeContent);
-        int expected = 0; 
+        int expected = 1; 
         
         assertEquals("Blank lines MUSN'T be counted", expected, SourceCodeProcessor.countNonCommentedLines(sourceCode));
     }

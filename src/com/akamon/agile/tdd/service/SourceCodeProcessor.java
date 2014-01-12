@@ -17,7 +17,7 @@ public class SourceCodeProcessor {
         
         while (linesEnumeration.hasMoreElements()) {            
             SourceCodeLine line = linesEnumeration.nextElement();            
-            nonCommentedlines+= line.isDoubleBarComment() ? 0 : 1;                       
+            nonCommentedlines+= (line.isDoubleBarComment() || line.isBlankLine()) ? 0 : 1;                       
         }
                         
         return nonCommentedlines;
