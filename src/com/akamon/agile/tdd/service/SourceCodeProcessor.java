@@ -10,16 +10,39 @@ import java.util.Enumeration;
  */
 public class SourceCodeProcessor {
  
-    public static int countNonCommentedLines(SourceCode sourceCode){
-        int nonCommentedlines = 0;
-        
+    private int linesCount;
+    
+    public int countNonCommentedAndNonBlankLines(SourceCode sourceCode){        
+        initLinesCounter();
+        recordNonCommentedAndNonBlankLines(sourceCode);
+                        
+        return linesCount;
+    } 
+    
+    private void initLinesCounter(){
+        linesCount = 0;
+    }
+    
+    private void recordNonCommentedAndNonBlankLines(SourceCode sourceCode){
         Enumeration<SourceCodeLine> linesEnumeration = sourceCode.getLineEnumeration();                        
         
         while (linesEnumeration.hasMoreElements()) {            
             SourceCodeLine line = linesEnumeration.nextElement();            
-            nonCommentedlines+= (line.isDoubleBarComment() || line.isBlankLine()) ? 0 : 1;                       
+            recordNonCommentedAndNonBlankLine(line);
         }
-                        
-        return nonCommentedlines;
-    }               
+    }
+    
+    private void recordNonCommentedAndNonBlankLine(SourceCodeLine line){
+        linesCount+= (shouldBeCountedAsNonCommentedAndNonBlank(line)) ? 0 : 1;
+    }
+    
+    private boolean shouldBeCountedAsNonCommentedAndNonBlank(SourceCodeLine line){
+        boolean isCommented = false;
+        
+        if (line.isDoubleBarComment() || line.isBlankLine()) {
+            isCommented = true;
+        }
+        
+        return isCommented;
+    }
 }
