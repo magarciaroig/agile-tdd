@@ -22,12 +22,21 @@ public class SourceCodeLineCounterTest {
     }
     
     @Test
+    public void notCountBlankLines() {
+        String[] sourceCodeContent = {"int c;", ""};
+        SourceCode sourceCode = new SourceCode(sourceCodeContent);
+        int expected = 0; 
+        
+        assertEquals("Blank lines MUSN'T be counted", expected, SourceCodeProcessor.countNonCommentedLines(sourceCode));
+    }
+    
+    @Test
     public void notCountDoubleBarCommentedLines() {
         String[] sourceCodeContent = {"// Var definition", "int c;"};
         SourceCode sourceCode = new SourceCode(sourceCodeContent);
         int expected = 1; 
         
-        assertEquals("Blank lines MUSN'T be counted", expected, SourceCodeProcessor.countNonCommentedLines(sourceCode));
+        assertEquals("Double bar commented lines MUSN'T be counted", expected, SourceCodeProcessor.countNonCommentedLines(sourceCode));
     }
     
 }
