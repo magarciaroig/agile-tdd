@@ -1,3 +1,5 @@
-/agile-tdd/nbproject/private/
-/nbproject/private/
-/build/
+nbproject/
+build/
+build.xml
+manifest.mf
+
