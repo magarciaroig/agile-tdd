@@ -7,7 +7,7 @@ package com.akamon.agile.tdd.sourcecode;
 public class SourceCodeProcessor {
  
     public static int countLines(String[] sourceCode){
-        return 0;
+        return sourceCode.length;
     }
     
 }
