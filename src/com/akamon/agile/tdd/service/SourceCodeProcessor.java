@@ -9,7 +9,17 @@ import com.akamon.agile.tdd.data.SourceCode;
 public class SourceCodeProcessor {
  
     public static int countNonCommentedLines(SourceCode sourceCode){
-        return sourceCode.countLines();
+        int nonCommentedlines = 0;
+                
+        for (int currentLineNumber = 0; currentLineNumber < sourceCode.countLines(); currentLineNumber++) {
+            String line = sourceCode.lineAt(currentLineNumber).trim();
+            
+            if (!line.startsWith("//")) {
+                nonCommentedlines++;
+            }
+        }
+        
+        return nonCommentedlines;
     }
     
 }

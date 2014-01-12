@@ -15,4 +15,8 @@ public class SourceCode {
     public int countLines() {
         return this.content.length;
     }
+        
+    public String lineAt(int lineNumber) {
+        return content[lineNumber];
+    }
 }
