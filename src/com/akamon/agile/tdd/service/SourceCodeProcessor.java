@@ -33,7 +33,9 @@ public class SourceCodeProcessor {
     }
     
     private void recordNonCommentedAndNonBlankLine(SourceCodeLine line){
-        linesCount+= (shouldBeCountedAsNonCommentedAndNonBlank(line)) ? 0 : 1;
+        if ( !shouldBeCountedAsNonCommentedAndNonBlank(line) ) {
+            linesCount++;
+        }
     }
     
     private boolean shouldBeCountedAsNonCommentedAndNonBlank(SourceCodeLine line){
