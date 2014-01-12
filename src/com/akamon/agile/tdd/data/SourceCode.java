@@ -1,22 +1,28 @@
 package com.akamon.agile.tdd.data;
 
+import java.util.Enumeration;
+
 /**
- * Class reponsible for abstract the concept of the source code content
+ * Class reponsible for abstracting the concept of the source code content
  * @author miguelgarcia
  */
 public class SourceCode {
     
-    private String[] content;
+    private String[] content;    
     
     public SourceCode(String[] content) {
         this.content = content;
     }
     
-    public int countLines() {
-        return this.content.length;
+    /**
+     * @return the content
+     */
+    String[] getContent() {
+        return content;
     }
+    
+    public Enumeration<SourceCodeLine> getLineEnumeration(){
+        return new SourceCodeLineEnumeration(this);
+    }    
         
-    public String lineAt(int lineNumber) {
-        return content[lineNumber];
-    }
 }

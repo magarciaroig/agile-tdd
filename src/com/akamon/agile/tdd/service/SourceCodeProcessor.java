@@ -1,6 +1,8 @@
 package com.akamon.agile.tdd.service;
 
 import com.akamon.agile.tdd.data.SourceCode;
+import com.akamon.agile.tdd.data.SourceCodeLine;
+import java.util.Enumeration;
 
 /**
  * Class with responsability of performing analysis against source code content
@@ -10,16 +12,14 @@ public class SourceCodeProcessor {
  
     public static int countNonCommentedLines(SourceCode sourceCode){
         int nonCommentedlines = 0;
-                
-        for (int currentLineNumber = 0; currentLineNumber < sourceCode.countLines(); currentLineNumber++) {
-            String line = sourceCode.lineAt(currentLineNumber).trim();
-            
-            if (!line.startsWith("//")) {
-                nonCommentedlines++;
-            }
-        }
         
+        Enumeration<SourceCodeLine> linesEnumeration = sourceCode.getLineEnumeration();                        
+        
+        while (linesEnumeration.hasMoreElements()) {            
+            SourceCodeLine line = linesEnumeration.nextElement();            
+            nonCommentedlines+= line.isDoubleBarComment() ? 0 : 1;                       
+        }
+                        
         return nonCommentedlines;
-    }
-    
+    }               
 }
