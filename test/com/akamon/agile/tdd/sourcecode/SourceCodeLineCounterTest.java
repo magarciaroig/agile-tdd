@@ -42,5 +42,19 @@ public class SourceCodeLineCounterTest {
         assertEquals("Simple commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
     }
         
+    @Test
+    public void notCountBlockCommentedLines() {
+        String[] sourceCodeContent = {
+            "/** Var definition", 
+            "* Please place the variables in this section", 
+            "**/",
+            "int c;"};
+        
+        SourceCode sourceCode = new SourceCode(sourceCodeContent);
+        SourceCodeProcessor processor = new SourceCodeProcessor();
+        int expected = 1; 
+        
+        assertEquals("Block commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
+    }
     
 }
