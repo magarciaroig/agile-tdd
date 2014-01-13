@@ -14,54 +14,66 @@ public class SourceCodeLineCounterTest {
             
     @Test
     public void countAllLines() {
-       String[] sourceCodeContent = {"int c;"};
+       final String[] sourceCodeContent = {"int c;"};
        SourceCode sourceCode = new SourceCode(sourceCodeContent);
        SourceCodeProcessor processor = new SourceCodeProcessor();
-       int expected = 1;       
+       final int expected = 1;       
        
        assertEquals("There was one line of code", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
     }
     
     @Test
     public void notCountBlankLines() {
-        String[] sourceCodeContent = {"int c;", ""};
+        final String[] sourceCodeContent = {"int c;", ""};
         SourceCode sourceCode = new SourceCode(sourceCodeContent);
         SourceCodeProcessor processor = new SourceCodeProcessor();
-        int expected = 1; 
+        final int expected = 1; 
         
         assertEquals("Blank lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
     }
     
     @Test
     public void notCountSimpleCommentedLines() {
-        String[] sourceCodeContent = {"// Var definition", "int c;"};
+        final String[] sourceCodeContent = {"// Var definition", "int c;"};
         SourceCode sourceCode = new SourceCode(sourceCodeContent);
         SourceCodeProcessor processor = new SourceCodeProcessor();
-        int expected = 1; 
+        final int expected = 1; 
         
         assertEquals("Simple commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
     }
         
     @Test
     public void notCountBlockCommentedLines() {
-        String[] sourceCodeContent = {
+        
+        final String[] sourceCodeContentMultiLineBlockComment = {
             "/** Var definition", 
             "* Please place the variables in this section", 
             "**/",
             "int c;"};
         
-        SourceCode sourceCode = new SourceCode(sourceCodeContent);
-        SourceCodeProcessor processor = new SourceCodeProcessor();
-        int expected = 1; 
-        
-        assertEquals("Block commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
-        
-        String[] sourceCodeContentOneLineBlockComment = {
+        final String[] sourceCodeContentOneLineBlockComment = {
             "/** Var definition */",             
             "int c;"};
-        sourceCode = new SourceCode(sourceCodeContent);
-        expected = 1; 
-        assertEquals("One line Block commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
+        
+        final String multiLineBlockCommentTestWarning = "Block commented lines MUSN'T be counted";
+        final String oneLineBlockCommentTestWarning = "One line Block commented lines MUSN'T be counted";
+                
+        final int lineCountExpected = 1; 
+        
+        checkSourceCodeBlockComentCount(sourceCodeContentMultiLineBlockComment, 
+                lineCountExpected, 
+                multiLineBlockCommentTestWarning);
+        
+        checkSourceCodeBlockComentCount(sourceCodeContentOneLineBlockComment, 
+                lineCountExpected, 
+                oneLineBlockCommentTestWarning);                
+    }
+    
+    private void checkSourceCodeBlockComentCount(String[] sourceCodeContent, int expectedCount, String warningMsg) {
+        SourceCode sourceCode = new SourceCode(sourceCodeContent);
+        SourceCodeProcessor processor = new SourceCodeProcessor();
+        
+        assertEquals(warningMsg, expectedCount, processor.countNonCommentedAndNonBlankLines(sourceCode));
     }
     
 }

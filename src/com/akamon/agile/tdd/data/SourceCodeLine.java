@@ -51,5 +51,9 @@ public class SourceCodeLine {
     
     public boolean isBlockCommentEnd() {
         return cleanedContent.endsWith("*/");
-    }    
+    } 
+    
+    public boolean isBlockComment(){
+        return isBlockCommentInit() || isBlockCommentEnd();
+    }
 }

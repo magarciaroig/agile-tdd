@@ -10,13 +10,15 @@ import java.util.Enumeration;
  */
 public class SourceCodeProcessor {
  
-    private int linesCount;
-    private boolean inBlockComment;
+    private enum Status {INITIAL_PROCESSOR_STATUS, INSIDE_BLOCK_COMMENT_STATE};
+    
+    private int linesCount;    
+    private Status status = Status.INITIAL_PROCESSOR_STATUS;
     
     public int countNonCommentedAndNonBlankLines(SourceCode sourceCode){        
-        initLinesCounter();
-        inBlockComment = false;
+        initLinesCounter();        
         recordNonCommentedAndNonBlankLines(sourceCode);
+        
                         
         return linesCount;
     } 
@@ -35,7 +37,8 @@ public class SourceCodeProcessor {
     }
     
     private void recordNonCommentedAndNonBlankLine(SourceCodeLine line){
-        if ( !shouldBeCountedAsNonCommentedAndNonBlank(line) ) {
+        final boolean incrementLinesCounter = !shouldBeCountedAsNonCommentedAndNonBlank(line);
+        if (incrementLinesCounter) {
             linesCount++;
         }
     }
@@ -43,19 +46,47 @@ public class SourceCodeProcessor {
     private boolean shouldBeCountedAsNonCommentedAndNonBlank(SourceCodeLine line){
         boolean isCommented = false;
         
-        if (line.isSimpleComment() || line.isBlankLine() || line.isBlockCommentInit() || line.isBlockCommentEnd() || inBlockComment) {            
+        final boolean inCommentScenario = checkCommentOrBlankLineOrInsidePrevBlockComment(line);
+        if (inCommentScenario) {            
             isCommented = true;
             
-            if (line.isBlockCommentInit()) {
-                inBlockComment = true;
-            }
-            
-            if (line.isBlockCommentEnd()) {
-                inBlockComment = false;
-            }
-            
+            updateStatusIfNeeded(line);            
         }
         
         return isCommented;
+    } 
+    
+    private boolean checkCommentOrBlankLineOrInsidePrevBlockComment(SourceCodeLine line){
+        return ( line.isSimpleComment() || 
+                line.isBlankLine() || 
+                line.isBlockComment() || 
+                insideBlockComment() );
+    }
+    
+    private boolean insideBlockComment(){
+        return status.equals(Status.INSIDE_BLOCK_COMMENT_STATE);
+    }
+    
+    private void updateStatusIfNeeded(SourceCodeLine line){
+        updateToBlockCommentStateIfNeeded(line);
+        updateToInitialStateIfNeeded(line);
+    }
+    
+    private void updateToBlockCommentStateIfNeeded(SourceCodeLine line){
+        final boolean isBeginOfBlockComment = line.isBlockCommentInit();
+        if (isBeginOfBlockComment) {
+            updateStatus(Status.INSIDE_BLOCK_COMMENT_STATE);
+        }
+    }
+    
+    private void updateToInitialStateIfNeeded(SourceCodeLine line){
+        final boolean isEndOfBlockComment = line.isBlockCommentEnd();
+        if (isEndOfBlockComment) {
+            updateStatus(Status.INITIAL_PROCESSOR_STATUS);
+        }
+    }
+    
+    private void updateStatus(Status status){
+        this.status = status;
     }
 }
