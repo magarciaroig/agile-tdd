@@ -41,7 +41,7 @@ public class SourceCodeProcessor {
     private boolean shouldBeCountedAsNonCommentedAndNonBlank(SourceCodeLine line){
         boolean isCommented = false;
         
-        if (line.isDoubleBarComment() || line.isBlankLine()) {
+        if (line.isSimpleComment() || line.isBlankLine()) {
             isCommented = true;
         }
         

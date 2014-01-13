@@ -37,7 +37,7 @@ public class SourceCodeLine {
         return sourceCodeOwner;
     }
     
-    public boolean isDoubleBarComment() {
+    public boolean isSimpleComment() {
         return cleanedContent.startsWith("//");
     }    
     

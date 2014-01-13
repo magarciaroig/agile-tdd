@@ -33,7 +33,7 @@ public class SourceCodeLineCounterTest {
     }
     
     @Test
-    public void notCountDoubleBarCommentedLines() {
+    public void notCountSimpleCommentedLines() {
         String[] sourceCodeContent = {"// Var definition", "int c;"};
         SourceCode sourceCode = new SourceCode(sourceCodeContent);
         SourceCodeProcessor processor = new SourceCodeProcessor();
