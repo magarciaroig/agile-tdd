@@ -55,6 +55,13 @@ public class SourceCodeLineCounterTest {
         int expected = 1; 
         
         assertEquals("Block commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
+        
+        String[] sourceCodeContentOneLineBlockComment = {
+            "/** Var definition */",             
+            "int c;"};
+        sourceCode = new SourceCode(sourceCodeContent);
+        expected = 1; 
+        assertEquals("One line Block commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
     }
     
 }

@@ -11,16 +11,18 @@ import java.util.Enumeration;
 public class SourceCodeProcessor {
  
     private int linesCount;
+    private boolean inBlockComment;
     
     public int countNonCommentedAndNonBlankLines(SourceCode sourceCode){        
         initLinesCounter();
+        inBlockComment = false;
         recordNonCommentedAndNonBlankLines(sourceCode);
                         
         return linesCount;
     } 
     
     private void initLinesCounter(){
-        linesCount = 0;
+        linesCount = 0;        
     }
     
     private void recordNonCommentedAndNonBlankLines(SourceCode sourceCode){
@@ -41,8 +43,17 @@ public class SourceCodeProcessor {
     private boolean shouldBeCountedAsNonCommentedAndNonBlank(SourceCodeLine line){
         boolean isCommented = false;
         
-        if (line.isSimpleComment() || line.isBlankLine()) {
+        if (line.isSimpleComment() || line.isBlankLine() || line.isBlockCommentInit() || line.isBlockCommentEnd() || inBlockComment) {            
             isCommented = true;
+            
+            if (line.isBlockCommentInit()) {
+                inBlockComment = true;
+            }
+            
+            if (line.isBlockCommentEnd()) {
+                inBlockComment = false;
+            }
+            
         }
         
         return isCommented;

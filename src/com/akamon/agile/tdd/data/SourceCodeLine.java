@@ -12,7 +12,7 @@ public class SourceCodeLine {
     private SourceCode sourceCodeOwner;
     
     
-    SourceCodeLine(String lineContent, int lineNumber, SourceCode sourceCodeOwner){
+    SourceCodeLine(String lineContent, int lineNumber, SourceCode sourceCodeOwner) {
         this.rawContent = lineContent;
         this.cleanedContent =  this.rawContent.trim();
         this.sourceCodeOwner = sourceCodeOwner;
@@ -33,7 +33,7 @@ public class SourceCodeLine {
     /**
      * @return the sourceCode
      */
-    public SourceCode getSourceCodeOwner(){
+    public SourceCode getSourceCodeOwner() {
         return sourceCodeOwner;
     }
     
@@ -45,4 +45,11 @@ public class SourceCodeLine {
         return cleanedContent.equals("");
     }
     
+    public boolean isBlockCommentInit() {
+        return cleanedContent.startsWith("/*");
+    }
+    
+    public boolean isBlockCommentEnd() {
+        return cleanedContent.endsWith("*/");
+    }    
 }
