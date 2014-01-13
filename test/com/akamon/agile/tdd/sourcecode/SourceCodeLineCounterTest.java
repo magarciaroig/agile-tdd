@@ -45,13 +45,13 @@ public class SourceCodeLineCounterTest {
     @Test
     public void notCountBlockCommentedLines() {
         
-        final String[] sourceCodeContentMultiLineBlockComment = {
+        final String[] sourceCodeContentMultiLineBlockComment = {            
             "/** Var definition", 
             "* Please place the variables in this section", 
             "**/",
             "int c;"};
         
-        final String[] sourceCodeContentOneLineBlockComment = {
+        final String[] sourceCodeContentOneLineBlockComment = {           
             "/** Var definition */",             
             "int c;"};
         
@@ -67,6 +67,22 @@ public class SourceCodeLineCounterTest {
         checkSourceCodeBlockComentCount(sourceCodeContentOneLineBlockComment, 
                 lineCountExpected, 
                 oneLineBlockCommentTestWarning);                
+    }
+    
+    @Test
+    public void countLinesWithCodeBeforeOfAfterComments(){
+        final String[] sourceCodeWithCodeBeforeOfAfterComments = {            
+            "/** Var definition", 
+            "* Please place the variables in this section", 
+            "**/ int c;",
+            "c = 1;"};
+        final int lineCountExpected = 2; 
+        final String codeWithCodeBeforeOfAfterCommentsWarning = 
+                "Lines with code before of after comments MUST be counted";
+        
+        checkSourceCodeBlockComentCount(sourceCodeWithCodeBeforeOfAfterComments, 
+                lineCountExpected, 
+                codeWithCodeBeforeOfAfterCommentsWarning);     
     }
     
     private void checkSourceCodeBlockComentCount(String[] sourceCodeContent, int expectedCount, String warningMsg) {
