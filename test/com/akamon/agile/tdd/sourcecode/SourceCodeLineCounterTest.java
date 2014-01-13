@@ -39,7 +39,8 @@ public class SourceCodeLineCounterTest {
         SourceCodeProcessor processor = new SourceCodeProcessor();
         int expected = 1; 
         
-        assertEquals("Double bar commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
+        assertEquals("Simple commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
     }
+        
     
 }
