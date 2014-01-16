@@ -12,29 +12,29 @@ public class SourceCodeLineCounterTest {
             
     @Test
     public void countAllLines() {
-       final String sourceCode = "int c;";      
-       SourceCodeProcessor processor = new SourceCodeProcessor();
-       final int expected = 1;       
+       final String sourceCode = "int c;";             
+       final int expected = 1;     
+       final String warningMsg = "There was one line of code";
        
-       assertEquals("There was one line of code", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
+       checkTextRightLineCount(sourceCode, expected, warningMsg);       
     }
     
     @Test
     public void notCountBlankLines() {
-        final String sourceCode = "int c;\n";        
-        SourceCodeProcessor processor = new SourceCodeProcessor();
+        final String sourceCode = "int c;\n";               
         final int expected = 1; 
+        final String warningMsg = "Blank lines MUSN'T be counted";
         
-        assertEquals("Blank lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
+        checkTextRightLineCount(sourceCode, expected, warningMsg);
     }
     
     @Test
     public void notCountSimpleCommentedLines() {
-        final String sourceCode = "// Var definition\nint c;";        
-        SourceCodeProcessor processor = new SourceCodeProcessor();
+        final String sourceCode = "// Var definition\nint c;";                
         final int expected = 1; 
+        final String warningMsg = "Simple commented lines MUSN'T be counted";
         
-        assertEquals("Simple commented lines MUSN'T be counted", expected, processor.countNonCommentedAndNonBlankLines(sourceCode));
+        checkTextRightLineCount(sourceCode, expected, warningMsg);
     }
         
     @Test
@@ -45,6 +45,7 @@ public class SourceCodeLineCounterTest {
                 .append("/** Var definition\n")
                 .append("* Please place the variables in this section\n")
                 .append("**/\n")
+                .append("  \n")
                 .append("int c;\n");
         
         StringBuilder sourceCodeContentOneLineBlockComment = new StringBuilder();
@@ -57,11 +58,11 @@ public class SourceCodeLineCounterTest {
                 
         final int lineCountExpected = 1; 
         
-        checkSourceCodeBlockComentCount(sourceCodeContentMultiLineBlockComment.toString(), 
+        checkTextRightLineCount(sourceCodeContentMultiLineBlockComment.toString(), 
                 lineCountExpected, 
                 multiLineBlockCommentTestWarning);
         
-        checkSourceCodeBlockComentCount(sourceCodeContentOneLineBlockComment.toString(), 
+        checkTextRightLineCount(sourceCodeContentOneLineBlockComment.toString(), 
                 lineCountExpected, 
                 oneLineBlockCommentTestWarning);                
     }
@@ -73,20 +74,19 @@ public class SourceCodeLineCounterTest {
                 .append("/** Var definition\n")
                 .append("* Please place the variables in this section\n")
                 .append("**/ int c;\n")
+                .append(" // Single line comment \n")
                 .append("c = 1;");
         
         final int lineCountExpected = 2; 
         final String codeWithCodeBeforeOfAfterCommentsWarning = 
                 "Lines with code before of after comments MUST be counted";
         
-        checkSourceCodeBlockComentCount(sourceCodeWithCodeBeforeOfAfterComments.toString(), 
+        checkTextRightLineCount(sourceCodeWithCodeBeforeOfAfterComments.toString(), 
                 lineCountExpected, 
                 codeWithCodeBeforeOfAfterCommentsWarning);     
     }
     
-    private void checkSourceCodeBlockComentCount(String sourceCodeContent, int expectedCount, String warningMsg) {        
-        SourceCodeProcessor processor = new SourceCodeProcessor();
-        
-        assertEquals(warningMsg, expectedCount, processor.countNonCommentedAndNonBlankLines(sourceCodeContent));
+    private void checkTextRightLineCount(String sourceCodeContent, int expectedCount, String warningMsg) {
+        assertEquals(warningMsg, expectedCount, SourceCodeProcessor.countNonCommentedAndNonBlankLines(sourceCodeContent));
     }    
 }

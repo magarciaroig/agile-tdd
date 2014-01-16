@@ -7,27 +7,56 @@ import java.util.regex.Pattern;
  * @author miguelgarcia
  */
 public class SourceCodeProcessor {
- 
-    private enum Status {INITIAL_PROCESSOR_STATUS, INSIDE_BLOCK_COMMENT_STATE};
     
-    private int linesCount;    
-    private Status status = Status.INITIAL_PROCESSOR_STATUS;
+    private final static String blockCommentsRegexp = "/\\*(?:.|[\\n\\r])*?\\*/";
+    private final static String simpleCommentsRegExp = "\\s*//.*$";
+    private final static String blankLineRegexp = "^\\s*$\\n";
     
-    public int countNonCommentedAndNonBlankLines(String sourceCode){                                
-        final String blockCommentsRegexp = "/\\*(?:.|[\\n\\r])*?\\*/";
-        final String simpleCommentsRegExp = "\\s*//.*$";
-        final String blankLineRegexp = "^\\s*$\\n";
+    private final static  Pattern blockCommentsRegexpPattern = Pattern.compile(blockCommentsRegexp, Pattern.MULTILINE);
+    private final static  Pattern simpleCommentsRegExpPattern = Pattern.compile(simpleCommentsRegExp, Pattern.MULTILINE);
+    private final static  Pattern blankLineRegexpPattern = Pattern.compile(blankLineRegexp, Pattern.MULTILINE);
+    
+    private static Pattern[] nonCommentedAndNonBlankLinePatterns = {
+        blockCommentsRegexpPattern,
+        simpleCommentsRegExpPattern,
+        blankLineRegexpPattern        
+    };
         
-        Pattern blockCommentsRegexpPattern = Pattern.compile(blockCommentsRegexp, Pattern.MULTILINE);
-        Pattern simpleCommentsRegExpPattern = Pattern.compile(simpleCommentsRegExp, Pattern.MULTILINE);
-        Pattern blankLineRegexpPattern = Pattern.compile(blankLineRegexp, Pattern.MULTILINE);
+    public static int countNonCommentedAndNonBlankLines(String sourceCode){                                
+       
+        String cleanSourceCode = removeMatchedContentFromPatterns (sourceCode, nonCommentedAndNonBlankLinePatterns);       
+        String cleanCodeLines[] = parseLinesFromText (cleanSourceCode);
+        final int cleanCodeLinesCount = countLines (cleanCodeLines);
         
-        String sourceNoBlockComments = blockCommentsRegexpPattern.matcher(sourceCode).replaceAll("");
-        String sourceNoComments = simpleCommentsRegExpPattern.matcher(sourceNoBlockComments).replaceAll("");
-        String sourceNoCommentsAndNoBlankLines = blankLineRegexpPattern.matcher(sourceNoComments).replaceAll("");
-                                                              
-        String[] lines = sourceNoCommentsAndNoBlankLines.split("\n");
-        
+        return cleanCodeLinesCount;
+    }      
+    
+    private static int countLines (String[] lines){
         return lines.length;
-    }               
+    }
+    
+    private static String[] parseLinesFromText (String text){
+        final String newLineCharacterRegexp = "\\n";        
+        final String[] lines = text.split(newLineCharacterRegexp);
+        
+        return lines;
+    }
+    
+    private static String removeMatchedContentFromPatterns (String originalText, Pattern[] patternsToAply){
+        final String textToSubstitute = "";
+        
+        return applyMultipleRegexpPatternsToText (originalText, textToSubstitute, patternsToAply);
+    }
+    
+    private static String applyMultipleRegexpPatternsToText (String originalText, String textToSubstitute, Pattern[] patternsToAply){
+        for (Pattern currentPattern : patternsToAply){
+            originalText = applySingleRegexpPatternToText (originalText, textToSubstitute, currentPattern);
+        }
+        
+        return originalText;
+    }
+    
+    private static String applySingleRegexpPatternToText (String originalText, String textToSubstitute, Pattern patternToAply){
+         return patternToAply.matcher(originalText).replaceAll(textToSubstitute);
+    }
 }
