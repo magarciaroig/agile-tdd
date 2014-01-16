@@ -37,30 +37,34 @@ public class SourceCodeProcessor {
     }
     
     private void recordNonCommentedAndNonBlankLine(SourceCodeLine line){
-        final boolean incrementLinesCounter = !shouldBeCountedAsNonCommentedAndNonBlank(line);
+        final boolean incrementLinesCounter = shouldBeCountedAsNonCommentedAndNonBlank(line);
         if (incrementLinesCounter) {
             linesCount++;
         }
     }
     
     private boolean shouldBeCountedAsNonCommentedAndNonBlank(SourceCodeLine line){
-        boolean isCommented = false;
-        
-        final boolean inCommentScenario = checkCommentOrBlankLineOrInsidePrevBlockComment(line);
-        if (inCommentScenario) {            
-            isCommented = true;
+        /*final boolean inCommentScenario = checkCommentOrBlankLineOrInsidePrevBlockComment(line);
+        if ((inCommentScenario) || (line.isBlockCommentInit() || !line.isBlockCommentEnd())) {            
             
             updateStatusIfNeeded(line);            
+        }*/
+        if (status.equals(Status.INITIAL_PROCESSOR_STATUS)){
+            
+        }
+        else if (status.equals(Status.INSIDE_BLOCK_COMMENT_STATE)){
+            
         }
         
-        return isCommented;
+        return true;        
     } 
     
     private boolean checkCommentOrBlankLineOrInsidePrevBlockComment(SourceCodeLine line){
-        return ( line.isSimpleComment() || 
+        /*return ( line.isSimpleComment() || 
                 line.isBlankLine() || 
                 line.isBlockComment() || 
-                insideBlockComment() );
+                insideBlockComment() );*/
+        return ((insideBlockComment()) || (!line.hasNonCommentedContent()));
     }
     
     private boolean insideBlockComment(){
