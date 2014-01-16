@@ -1,5 +1,6 @@
 package com.akamon.agile.tdd.service;
 
+import com.akamon.agile.tdd.data.ISourceCodeProvider;
 import java.util.regex.Pattern;
 
 /**
@@ -22,13 +23,16 @@ public class SourceCodeProcessor {
         blankLineRegexpPattern        
     };
         
-    public static int countNonCommentedAndNonBlankLines(String sourceCode){                                
+    public static SourceCodeStats analyze(ISourceCodeProvider sourceCodeProvider){                                
        
-        String cleanSourceCode = removeMatchedContentFromPatterns (sourceCode, nonCommentedAndNonBlankLinePatterns);       
+        String cleanSourceCode = removeMatchedContentFromPatterns (sourceCodeProvider.loadSource(), nonCommentedAndNonBlankLinePatterns);       
         String cleanCodeLines[] = parseLinesFromText (cleanSourceCode);
         final int cleanCodeLinesCount = countLines (cleanCodeLines);
         
-        return cleanCodeLinesCount;
+        SourceCodeStats stats = new SourceCodeStats();
+        stats.setNonCommentedAndNonBlankLines(cleanCodeLinesCount);        
+        
+        return stats;
     }      
     
     private static int countLines (String[] lines){

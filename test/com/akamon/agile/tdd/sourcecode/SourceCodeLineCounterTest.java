@@ -1,6 +1,9 @@
 package com.akamon.agile.tdd.sourcecode;
 
+import com.akamon.agile.tdd.data.ISourceCodeProvider;
+import com.akamon.agile.tdd.data.MemorySourceCodeProvider;
 import com.akamon.agile.tdd.service.SourceCodeProcessor;
+import com.akamon.agile.tdd.service.SourceCodeStats;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -15,8 +18,9 @@ public class SourceCodeLineCounterTest {
        final String sourceCode = "int c;";             
        final int expected = 1;     
        final String warningMsg = "There was one line of code";
+       final ISourceCodeProvider sourceCodeProvider = new MemorySourceCodeProvider(sourceCode);
        
-       checkTextRightLineCount(sourceCode, expected, warningMsg);       
+       checkRightTextLineCount(sourceCodeProvider, expected, warningMsg);       
     }
     
     @Test
@@ -24,8 +28,9 @@ public class SourceCodeLineCounterTest {
         final String sourceCode = "int c;\n";               
         final int expected = 1; 
         final String warningMsg = "Blank lines MUSN'T be counted";
+        final ISourceCodeProvider sourceCodeProvider = new MemorySourceCodeProvider(sourceCode);
         
-        checkTextRightLineCount(sourceCode, expected, warningMsg);
+        checkRightTextLineCount(sourceCodeProvider, expected, warningMsg);
     }
     
     @Test
@@ -33,8 +38,9 @@ public class SourceCodeLineCounterTest {
         final String sourceCode = "// Var definition\nint c;";                
         final int expected = 1; 
         final String warningMsg = "Simple commented lines MUSN'T be counted";
+        final ISourceCodeProvider sourceCodeProvider = new MemorySourceCodeProvider(sourceCode);
         
-        checkTextRightLineCount(sourceCode, expected, warningMsg);
+        checkRightTextLineCount(sourceCodeProvider, expected, warningMsg);
     }
         
     @Test
@@ -55,14 +61,20 @@ public class SourceCodeLineCounterTest {
         
         final String multiLineBlockCommentTestWarning = "Block commented lines MUSN'T be counted";
         final String oneLineBlockCommentTestWarning = "One line Block commented lines MUSN'T be counted";
+        
+        final ISourceCodeProvider sourceCodeProviderMultiLineBlockComment = 
+                new MemorySourceCodeProvider(sourceCodeContentMultiLineBlockComment.toString());
+        
+         final ISourceCodeProvider sourceCodeProviderOneLineBlockComment = 
+                new MemorySourceCodeProvider(sourceCodeContentOneLineBlockComment.toString());
                 
         final int lineCountExpected = 1; 
         
-        checkTextRightLineCount(sourceCodeContentMultiLineBlockComment.toString(), 
+        checkRightTextLineCount(sourceCodeProviderMultiLineBlockComment, 
                 lineCountExpected, 
                 multiLineBlockCommentTestWarning);
         
-        checkTextRightLineCount(sourceCodeContentOneLineBlockComment.toString(), 
+        checkRightTextLineCount(sourceCodeProviderOneLineBlockComment, 
                 lineCountExpected, 
                 oneLineBlockCommentTestWarning);                
     }
@@ -79,14 +91,19 @@ public class SourceCodeLineCounterTest {
         
         final int lineCountExpected = 2; 
         final String codeWithCodeBeforeOfAfterCommentsWarning = 
-                "Lines with code before of after comments MUST be counted";
+                "Lines with code before of after comments MUST be counted";        
+        final ISourceCodeProvider sourceCodeProvider = 
+                new MemorySourceCodeProvider(sourceCodeWithCodeBeforeOfAfterComments.toString());
         
-        checkTextRightLineCount(sourceCodeWithCodeBeforeOfAfterComments.toString(), 
+        checkRightTextLineCount(sourceCodeProvider, 
                 lineCountExpected, 
                 codeWithCodeBeforeOfAfterCommentsWarning);     
     }
     
-    private void checkTextRightLineCount(String sourceCodeContent, int expectedCount, String warningMsg) {
-        assertEquals(warningMsg, expectedCount, SourceCodeProcessor.countNonCommentedAndNonBlankLines(sourceCodeContent));
+    private void checkRightTextLineCount(ISourceCodeProvider sourceCodeProvider, int expectedCount, String warningMsg) {
+        final SourceCodeStats sourceStats = SourceCodeProcessor.analyze(sourceCodeProvider);
+        final int nonCommentedAndNonBlankLines = sourceStats.getNonCommentedAndNonBlankLines();
+        
+        assertEquals(warningMsg, expectedCount, nonCommentedAndNonBlankLines);
     }    
 }
