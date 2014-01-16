@@ -1,7 +1,5 @@
 package com.akamon.agile.tdd.sourcecode;
 
-
-import com.akamon.agile.tdd.data.SourceCode;
 import com.akamon.agile.tdd.service.SourceCodeProcessor;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -14,8 +12,7 @@ public class SourceCodeLineCounterTest {
             
     @Test
     public void countAllLines() {
-       final String[] sourceCodeContent = {"int c;"};
-       SourceCode sourceCode = new SourceCode(sourceCodeContent);
+       final String sourceCode = "int c;";      
        SourceCodeProcessor processor = new SourceCodeProcessor();
        final int expected = 1;       
        
@@ -24,8 +21,7 @@ public class SourceCodeLineCounterTest {
     
     @Test
     public void notCountBlankLines() {
-        final String[] sourceCodeContent = {"int c;", ""};
-        SourceCode sourceCode = new SourceCode(sourceCodeContent);
+        final String sourceCode = "int c;\n";        
         SourceCodeProcessor processor = new SourceCodeProcessor();
         final int expected = 1; 
         
@@ -34,8 +30,7 @@ public class SourceCodeLineCounterTest {
     
     @Test
     public void notCountSimpleCommentedLines() {
-        final String[] sourceCodeContent = {"// Var definition", "int c;"};
-        SourceCode sourceCode = new SourceCode(sourceCodeContent);
+        final String sourceCode = "// Var definition\nint c;";        
         SourceCodeProcessor processor = new SourceCodeProcessor();
         final int expected = 1; 
         
@@ -45,51 +40,53 @@ public class SourceCodeLineCounterTest {
     @Test
     public void notCountBlockCommentedLines() {
         
-        final String[] sourceCodeContentMultiLineBlockComment = {            
-            "/** Var definition", 
-            "* Please place the variables in this section", 
-            "**/",
-            "int c;"};
+        StringBuilder sourceCodeContentMultiLineBlockComment = new StringBuilder();
+        sourceCodeContentMultiLineBlockComment
+                .append("/** Var definition\n")
+                .append("* Please place the variables in this section\n")
+                .append("**/\n")
+                .append("int c;\n");
         
-        final String[] sourceCodeContentOneLineBlockComment = {           
-            "/** Var definition */",             
-            "int c;"};
+        StringBuilder sourceCodeContentOneLineBlockComment = new StringBuilder();
+        sourceCodeContentOneLineBlockComment
+                .append("/** Var definition */")
+                .append("int c;");
         
         final String multiLineBlockCommentTestWarning = "Block commented lines MUSN'T be counted";
         final String oneLineBlockCommentTestWarning = "One line Block commented lines MUSN'T be counted";
                 
         final int lineCountExpected = 1; 
         
-        checkSourceCodeBlockComentCount(sourceCodeContentMultiLineBlockComment, 
+        checkSourceCodeBlockComentCount(sourceCodeContentMultiLineBlockComment.toString(), 
                 lineCountExpected, 
                 multiLineBlockCommentTestWarning);
         
-        checkSourceCodeBlockComentCount(sourceCodeContentOneLineBlockComment, 
+        checkSourceCodeBlockComentCount(sourceCodeContentOneLineBlockComment.toString(), 
                 lineCountExpected, 
                 oneLineBlockCommentTestWarning);                
     }
     
     @Test
     public void countLinesWithCodeBeforeOfAfterComments(){
-        final String[] sourceCodeWithCodeBeforeOfAfterComments = {            
-            "/** Var definition", 
-            "* Please place the variables in this section", 
-            "**/ int c;",
-            "c = 1;"};
+        StringBuilder sourceCodeWithCodeBeforeOfAfterComments = new StringBuilder();
+        sourceCodeWithCodeBeforeOfAfterComments
+                .append("/** Var definition\n")
+                .append("* Please place the variables in this section\n")
+                .append("**/ int c;\n")
+                .append("c = 1;");
+        
         final int lineCountExpected = 2; 
         final String codeWithCodeBeforeOfAfterCommentsWarning = 
                 "Lines with code before of after comments MUST be counted";
         
-        checkSourceCodeBlockComentCount(sourceCodeWithCodeBeforeOfAfterComments, 
+        checkSourceCodeBlockComentCount(sourceCodeWithCodeBeforeOfAfterComments.toString(), 
                 lineCountExpected, 
                 codeWithCodeBeforeOfAfterCommentsWarning);     
     }
     
-    private void checkSourceCodeBlockComentCount(String[] sourceCodeContent, int expectedCount, String warningMsg) {
-        SourceCode sourceCode = new SourceCode(sourceCodeContent);
+    private void checkSourceCodeBlockComentCount(String sourceCodeContent, int expectedCount, String warningMsg) {        
         SourceCodeProcessor processor = new SourceCodeProcessor();
         
-        assertEquals(warningMsg, expectedCount, processor.countNonCommentedAndNonBlankLines(sourceCode));
-    }
-    
+        assertEquals(warningMsg, expectedCount, processor.countNonCommentedAndNonBlankLines(sourceCodeContent));
+    }    
 }
